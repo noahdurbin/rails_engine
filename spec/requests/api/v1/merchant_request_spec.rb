@@ -42,7 +42,7 @@ describe 'merchants API' do
     create_list(:item, 2)
 
     get "/api/v1/merchants/#{merchant.id}/items"
-    items = JSON.parse(response.body, symbolize_names:true)
+    items = JSON.parse(response.body, symbolize_names:true)[:data]
 
     expect(response).to be_successful
 
