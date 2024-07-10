@@ -33,7 +33,7 @@ class Api::V1::ItemsController < ApplicationController
     if item.update!(item_params)
       render json: ItemSerializer.new(item), status: 200
     else
-      render json: { errors: item.errors.full_messages }, status: 400
+      render json: { errors: item.errors.full_messages }, status: 422
     end
   end
 

@@ -110,6 +110,22 @@ RSpec.describe "Item Api" do
       expect(item[:data][:attributes][:name]).to_not eq(previous_name)
       expect(item[:data][:attributes][:name]).to eq("NAME1")
     end
+
+    it "sad path for edit" do 
+      merchant = Merchant.create!(name: "Topps")
+      i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
+      previous_name = i.name
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{i.id}", headers: headers, params: JSON.generate({name: ""})
+
+      expect(response).to_not be_successful
+
+      item = JSON.parse(response.body, symbolize_names: true)
+      # require 'pry'; binding.pry
+
+     expect(item[:errors].first[:title]).to eq("Validation failed: Name can't be blank")
+    end
   end
 
   describe '#us 8 delete an item' do
