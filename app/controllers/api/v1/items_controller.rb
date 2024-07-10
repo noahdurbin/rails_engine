@@ -1,4 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
+
   def index
     if params[:merchant_id]
       merchant = Merchant.find(params[:merchant_id])
@@ -11,16 +13,18 @@ class Api::V1::ItemsController < ApplicationController
   def show
     item = Item.find_by(params[:item_id])
     render json: ItemSerializer.new(item)
+
   end
 
   def create
-    @item = Item.new(item_params)
-
-    if @item.save
-      render json: @item, status: 200
-    else
-      render json: @item.errors, status: :unprocessable_entity
+    item = Item.new(item_params)
+    if item.save
+      render json: item, status: 200
+    else  
+      render json: { errors: item.errors.full_messages }, status: 422
     end
+
+    
   end
 
   def update 
