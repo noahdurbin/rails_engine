@@ -11,6 +11,8 @@ Rails.application.routes.draw do
         resources :items, only: [:index]
       end
       resources :items, only: [:index, :show, :create]
+
+      patch "/items/:id", to: "items#update"
     end
   end
 end
