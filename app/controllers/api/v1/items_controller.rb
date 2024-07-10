@@ -8,8 +8,24 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
-  def show 
+  def show
     item = Item.find_by(params[:item_id])
     render json: ItemSerializer.new(item)
+  end
+
+  def create
+    @item = Item.new(item_params)
+
+    if @item.save
+      render json: @item, status: 200
+    else
+      render json: @item.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def item_params
+    params.permit(:name, :unit_price, :description, :merchant_id)
   end
 end
