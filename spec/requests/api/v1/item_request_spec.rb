@@ -75,4 +75,23 @@ RSpec.describe "Item Api" do
       expect(item[:merchant_id]).to eq(merchant1.id)
     end
   end
+
+  describe '#us 7 edit an item' do
+    it 'edits an item' do
+      merchant = Merchant.create!(name: "Topps")
+      i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
+      previous_name = i.name
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{i.id}", headers: headers, params: JSON.generate({name: "NAME1"})
+
+      
+      
+      expect(response).to be_successful
+      item = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(item[:data][:attributes][:name]).to_not eq(previous_name)
+      expect(item[:data][:attributes][:name]).to eq("NAME1")
+    end
+  end
 end
