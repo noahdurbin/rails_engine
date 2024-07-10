@@ -114,12 +114,12 @@ RSpec.describe "Item Api" do
     it "sad path for edit" do 
       merchant = Merchant.create!(name: "Topps")
       i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
-      previous_name = i.name
       headers = {"CONTENT_TYPE" => "application/json"}
 
       patch "/api/v1/items/#{i.id}", headers: headers, params: JSON.generate({name: ""})
 
       expect(response).to_not be_successful
+      expect(response.status).to eq(422)
 
       item = JSON.parse(response.body, symbolize_names: true)
       # require 'pry'; binding.pry
@@ -137,6 +137,35 @@ RSpec.describe "Item Api" do
 
       expect(response).to be_successful
       expect(response.status).to eq(204)
+    end
+  end
+
+  describe '#us 9 ' do
+    it 'returns the merchant of that item' do
+      merchant1 = create(:merchant)
+      item1 = create(:item, merchant: merchant1)
+
+      get "/api/v1/items/#{item1.id}/merchant"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      merchant= JSON.parse(response.body, symbolize_names: true)[:data]
+      
+      expect(merchant[:attributes]).to have_key(:name)
+      expect(merchant[:attributes][:name]).to be_a(String)
+    end
+
+    it 'sad path for the merchant of that item' do 
+      merchant1 = create(:merchant)
+
+      get "/api/v1/items/12322/merchant"
+      # require 'pry'; binding.pry
+
+      expect(response).to_not be_successful
+
+      expect(response.status).to eq(404)
+
     end
   end
 end

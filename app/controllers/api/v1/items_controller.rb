@@ -1,5 +1,4 @@
 class Api::V1::ItemsController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
 
   def index
     if params[:merchant_id]
@@ -13,7 +12,6 @@ class Api::V1::ItemsController < ApplicationController
   def show
     item = Item.find_by(params[:item_id])
     render json: ItemSerializer.new(item)
-
   end
 
   def create
@@ -23,8 +21,6 @@ class Api::V1::ItemsController < ApplicationController
     else  
       render json: { errors: item.errors.full_messages }, status: 422
     end
-
-    
   end
 
   def update 
@@ -32,8 +28,8 @@ class Api::V1::ItemsController < ApplicationController
 
     if item.update!(item_params)
       render json: ItemSerializer.new(item), status: 200
-    else
-      render json: { errors: item.errors.full_messages }, status: 422
+    # else
+    #   render json: { errors: item.errors.full_messages }, status: 422
     end
   end
 
@@ -42,6 +38,18 @@ class Api::V1::ItemsController < ApplicationController
     item.destroy
 
     render json: ItemSerializer.new(item), status: 204
+  end
+
+  def merchant 
+    @item = Item.find(params[:item_id])
+    # require 'pry'; binding.pry
+    @merchant = @item.merchant
+
+    if @merchant 
+      render json: MerchantSerializer.new(@merchant), status: 200
+    # else 
+    #   render json: { errors: item.errors.full_messages }, status: 404
+    end
   end
 
   private
