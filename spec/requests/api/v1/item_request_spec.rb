@@ -94,4 +94,16 @@ RSpec.describe "Item Api" do
       expect(item[:data][:attributes][:name]).to eq("NAME1")
     end
   end
+
+  describe '#us 8 delete an item' do
+    it 'deletes a specific item' do
+      merchant = Merchant.create!(name: "Topps")
+      i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
+     
+      delete "/api/v1/items/#{i.id}"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+    end
+  end
 end
