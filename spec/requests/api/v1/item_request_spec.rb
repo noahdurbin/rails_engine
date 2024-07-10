@@ -74,6 +74,23 @@ RSpec.describe "Item Api" do
       expect(item).to have_key(:merchant_id)
       expect(item[:merchant_id]).to eq(merchant1.id)
     end
+
+    it 'sad path' do 
+      merchant1 = create(:merchant)
+
+      item_params = {
+        "name": "value1",
+        "description": "value2",
+        "unit_price": nil,
+        "merchant_id": merchant1.id
+      }
+
+      post '/api/v1/items', params: item_params
+      expect(response).to_not be_successful
+
+      JSON.parse(response.body, symbolize_names: true)
+    end
+
   end
 
   describe '#us 7 edit an item' do
