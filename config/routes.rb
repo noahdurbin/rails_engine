@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :items, only: [:index, :show, :create]
 
       patch "/items/:id", to: "items#update"
+      delete"/items/:id", to: "items#destroy"
     end
   end
 end
