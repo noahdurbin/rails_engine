@@ -1,4 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
+
   def index
     if params[:merchant_id]
       merchant = Merchant.find(params[:merchant_id])
@@ -14,12 +15,11 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    @item = Item.new(item_params)
-
-    if @item.save
-      render json: @item, status: 200
-    else
-      render json: @item.errors, status: :unprocessable_entity
+    item = Item.new(item_params)
+    if item.save
+      render json: item, status: 200
+    else  
+      render json: { errors: item.errors.full_messages }, status: 422
     end
   end
 
@@ -28,8 +28,8 @@ class Api::V1::ItemsController < ApplicationController
 
     if item.update!(item_params)
       render json: ItemSerializer.new(item), status: 200
-    else
-      render json: { errors: item.errors.full_messages }, status: 400
+    # else
+    #   render json: { errors: item.errors.full_messages }, status: 422
     end
   end
 
@@ -38,6 +38,18 @@ class Api::V1::ItemsController < ApplicationController
     item.destroy
 
     render json: ItemSerializer.new(item), status: 204
+  end
+
+  def merchant 
+    @item = Item.find(params[:item_id])
+    # require 'pry'; binding.pry
+    @merchant = @item.merchant
+
+    if @merchant 
+      render json: MerchantSerializer.new(@merchant), status: 200
+    # else 
+    #   render json: { errors: item.errors.full_messages }, status: 404
+    end
   end
 
   private
