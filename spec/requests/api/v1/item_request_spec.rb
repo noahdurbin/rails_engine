@@ -162,4 +162,28 @@ RSpec.describe "Item Api" do
 
     end
   end
+
+  describe '#us 11' do
+    it 'should search for all of the items that match search criteria' do
+      merchant = Merchant.create(name: "Topps")
+      i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
+      
+      create_list(:item, 5)
+      get '/api/v1/items/find_all?name=ball'
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+    end
+
+    it 'sad path for invalid imput' do 
+      merchant = Merchant.create(name: "Topps")
+      i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
+
+      get '/api/v1/items/find_all?name='
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+    end
+  end
 end
