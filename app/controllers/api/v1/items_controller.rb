@@ -30,7 +30,6 @@ class Api::V1::ItemsController < ApplicationController
   def merchant
     @item = Item.find(params[:item_id])
     render json: MerchantSerializer.new(@item.merchant), status: 200
-
   end
 
   private
