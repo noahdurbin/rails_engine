@@ -1,5 +1,4 @@
 class Api::V1::ItemsController < ApplicationController
-
   def index
     if params[:merchant_id]
       merchant = Merchant.find(params[:merchant_id])
@@ -30,11 +29,8 @@ class Api::V1::ItemsController < ApplicationController
 
   def merchant
     @item = Item.find(params[:item_id])
-    @merchant = @item.merchant
+    render json: MerchantSerializer.new(@item.merchant), status: 200
 
-    if @merchant
-      render json: MerchantSerializer.new(@merchant), status: 200
-    end
   end
 
   private
