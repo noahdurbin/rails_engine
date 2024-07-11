@@ -5,4 +5,8 @@ class ApplicationRecord < ActiveRecord::Base
     where("name ILIKE ?", "%#{search_params}%").first
   end
 
+  def self.search_all(search_params)
+    where("name ILIKE ?", "%#{search_params}%")
+  end
+
 end
