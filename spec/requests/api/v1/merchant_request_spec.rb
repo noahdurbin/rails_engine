@@ -72,10 +72,9 @@ describe 'merchants API' do
       expect(m[:attributes][:name]).to eq("Turing")
     end
 
-    it 'sad path for search for a merchant' do 
-
+    it 'sad path for search for a merchant' do
       get "/api/v1/merchants/find?name=dadsa"
-      # require 'pry'; binding.pry
+
       expect(response).to_not be_successful
       expect(response.status).to eq(404)
       res = JSON.parse(response.body, symbolize_names:true)[:errors]
@@ -83,17 +82,13 @@ describe 'merchants API' do
       expect(res.first[:title]).to eq("Record Not Found")
     end
 
-    it ' sad path error for invalid search params ' do 
-
+    it ' sad path error for invalid search params ' do
       get "/api/v1/merchants/find?name="
-      # require 'pry'; binding.pry
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
       res = JSON.parse(response.body, symbolize_names:true)[:errors]
 
       expect(res.first[:title]).to eq("Name Must Be Filled In")
-
-
     end
   end
 end
