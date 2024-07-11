@@ -32,16 +32,13 @@ class Api::V1::ItemsController < ApplicationController
     render json: MerchantSerializer.new(@item.merchant), status: 200
   end
 
-  def search_all 
-
+  def search_all
     if params[:name].present?
-     items =Item.search_all(params[:name])
-
+      items =Item.search_all(params[:name])
       render json: ItemSerializer.new(items), status: 200
-    else 
+    else
       render json: ErrorSerializer.new(ErrorMessage.new("Name Must Be Filled In", 400)).serialize_json, status: 400
     end
-
   end
 
   private
