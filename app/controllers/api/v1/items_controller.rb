@@ -1,5 +1,4 @@
 class Api::V1::ItemsController < ApplicationController
-
   def index
     if params[:merchant_id]
       merchant = Merchant.find(params[:merchant_id])
@@ -10,27 +9,15 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    item = Item.find_by(params[:item_id])
-    render json: ItemSerializer.new(item)
+    render json: ItemSerializer.new(Item.find(params[:id]))
   end
 
   def create
-    item = Item.new(item_params)
-    if item.save
-      render json: item, status: 200
-    else  
-      render json: { errors: item.errors.full_messages }, status: 422
-    end
+    render json: ItemSerializer.new(Item.create!(item_params)), status: 201
   end
 
-  def update 
-    item = Item.find(params[:id])
-
-    if item.update!(item_params)
-      render json: ItemSerializer.new(item), status: 200
-    # else
-    #   render json: { errors: item.errors.full_messages }, status: 422
-    end
+  def update
+    render json: ItemSerializer.new(Item.update!(params[:id], item_params)), status: 200
   end
 
   def destroy
@@ -40,21 +27,14 @@ class Api::V1::ItemsController < ApplicationController
     render json: ItemSerializer.new(item), status: 204
   end
 
-  def merchant 
+  def merchant
     @item = Item.find(params[:item_id])
-    # require 'pry'; binding.pry
-    @merchant = @item.merchant
-
-    if @merchant 
-      render json: MerchantSerializer.new(@merchant), status: 200
-    # else 
-    #   render json: { errors: item.errors.full_messages }, status: 404
-    end
+    render json: MerchantSerializer.new(@item.merchant), status: 200
   end
 
   private
 
   def item_params
-    params.permit(:name, :unit_price, :description, :merchant_id)
+    params.require(:item).permit(:name, :unit_price, :description, :merchant_id)
   end
 end

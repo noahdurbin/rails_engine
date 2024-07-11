@@ -7,16 +7,19 @@ describe 'merchants API' do
     get '/api/v1/merchants'
 
     expect(response).to be_successful
+    expect(response.status).to eq(200)
+
     merchants = JSON.parse(response.body, symbolize_names:true)
 
-    expect(merchants.count).to eq(3)
+    merchants_objects = merchants[:data]
+    expect(merchants_objects.count).to eq(3)
 
-    merchants.each do |merchant|
+    merchants_objects.each do |merchant|
       expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_an(Integer)
+      expect(merchant[:id]).to be_an(String)
 
-      expect(merchant).to have_key(:name)
-      expect(merchant[:name]).to be_a(String)
+      expect(merchant[:attributes]).to have_key(:name)
+      expect(merchant[:attributes][:name]).to be_a(String)
     end
   end
 
@@ -25,15 +28,17 @@ describe 'merchants API' do
 
     get "/api/v1/merchants/#{id}"
 
-    merchant = JSON.parse(response.body, symbolize_names:true)
+    merchant_json = JSON.parse(response.body, symbolize_names:true)
+
+    merchant = merchant_json[:data]
 
     expect(response).to be_successful
 
     expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to eq(id)
+    expect(merchant[:id]).to eq(id.to_s)
 
-    expect(merchant).to have_key(:name)
-    expect(merchant[:name]).to be_a(String)
+    expect(merchant[:attributes]).to have_key(:name)
+    expect(merchant[:attributes][:name]).to be_a(String)
   end
 
   it 'can send all items for a given merchant' do
