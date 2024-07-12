@@ -70,3 +70,12 @@ bundle exec rspec
 - Capybara
 - Factory Bot for test data generation
 - JSON:API serialization
+
+## Contributors
+
+### Noah Durbin
+- [github](https://github.com/noahdurbin)
+- [linkedin](https://www.linkedin.com/in/noahdurbin/)
+### Rodrigo Chavez
+- [github](https://github.com/RodrigoACG)
+- [linkedin](https://www.linkedin.com/in/rodrigo-chavez1/)
