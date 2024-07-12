@@ -11,26 +11,34 @@ Rails Engine is a Ruby on Rails API that provides endpoints for managing merchan
 ## Setup
 
 1. Clone the repository:
+
 ```
 git clone https://github.com/noahdurbin/rails-engine.git
 cd rails-engine
 ```
 
 2. Install dependencies:
-bundle install
 
+```
+bundle install
+```
 
 3. Set up the database:
-rails db:create db:migrate db:seed
 
+```
+rails db:create db:migrate db:seed
+```
 
 4. Start the server:
+
 ```
 rails server
 ```
+
 ## Running Tests
 
 To run the test suite:
+
 ```
 bundle exec rspec
 ```
