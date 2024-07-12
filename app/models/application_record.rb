@@ -44,6 +44,6 @@ class ApplicationRecord < ActiveRecord::Base
     items = Item.all
     items = items.where("unit_price >= ?", min_price) if params[:min_price].present?
     items = items.where("unit_price <= ?", max_price) if params[:max_price].present?
-    items.order(Arel.sql("LOWER(name)"))
+    items.order(['lower(name)'])
   end
 end
