@@ -47,7 +47,7 @@ bundle exec rspec
 1. **Download the Collections:** Click on each provided link and use your browser's "Save Page As" (Cmd-S or Ctrl-S) function to download the files to your computer.
 2. **Import into Postman:** Open Postman, click the "Import" button in the top left corner. Navigate to where you saved the files and select both.
 3. **Confirm Import:** Ensure the import type is "Collection" and the format is "Postman Collection v2.1". Click "Import" to finalize.
-4. **Verify Collections:** You should now see two new collections in Postman: "Rails Engine Lite, Part 1" and "Rails Engine Lite, Part 2".
+4. **Run Collections:** You should now see two new collections in Postman and be able to open each collection and run them.
 
 - [Rails Engine, Section 1](https://backend.turing.edu/module3/projects/rails_engine_lite/RailsEngineSection1.postman_collection.json)
 - [Rails engine, Section 2](https://backend.turing.edu/module3/projects/rails_engine_lite/RailsEngineSection2.postman_collection.json)
