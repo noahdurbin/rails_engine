@@ -167,7 +167,7 @@ RSpec.describe "Item Api" do
     it 'should search for all of the items that match search criteria' do
       merchant = Merchant.create(name: "Topps")
       i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
-      
+
       create_list(:item, 5)
       get '/api/v1/items/find_all?name=ball'
 
@@ -176,7 +176,7 @@ RSpec.describe "Item Api" do
 
     end
 
-    it 'sad path for invalid imput' do 
+    it 'sad path for invalid imput' do
       merchant = Merchant.create(name: "Topps")
       i = Item.create!(name: "Ball", description: "Baseball", unit_price: 2.50, merchant_id: merchant.id)
 
@@ -184,6 +184,85 @@ RSpec.describe "Item Api" do
 
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
+    end
+  end
+
+  describe '#search-extension' do
+    it 'can find a single item by name' do
+      item1 = create(:item, name: "Ring")
+      item2 = create(:item, name: "Turing")
+
+      get "/api/v1/items/find?name=ring"
+
+      expect(response).to be_successful
+      item = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(item[:attributes][:name]).to eq("Ring")
+    end
+
+    it 'can find a single item by minimum price' do
+      item1 = create(:item, name: "Cheaper", unit_price: 10.00)
+      item2 = create(:item, name: "Expensive", unit_price: 100.00)
+
+      get "/api/v1/items/find?min_price=50"
+
+      expect(response).to be_successful
+      item = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(item[:attributes][:name]).to eq("Expensive")
+    end
+
+    it 'can find a single item by maximum price' do
+      item1 = create(:item, name: "bike", unit_price: 10.00)
+      item2 = create(:item, name: "motorbike", unit_price: 100.00)
+
+      get "/api/v1/items/find?max_price=50"
+
+      expect(response).to be_successful
+      item = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(item[:attributes][:name]).to eq("bike")
+    end
+
+    it 'returns an error when searching by both name and price' do
+      get "/api/v1/items/find?name=ring&min_price=50"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+    end
+  end
+
+  describe '#search_all' do
+    it 'can find all items matching a name search' do
+      item1 = create(:item, name: "Ring")
+      item2 = create(:item, name: "Turing")
+      item3 = create(:item, name: "Other")
+
+      get "/api/v1/items/find_all?name=ring"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.length).to eq(2)
+    end
+
+    it 'can find all items within a price range' do
+      item1 = create(:item, name: "iphone", unit_price: 10.00)
+      item2 = create(:item, name: "ipad", unit_price: 50.00)
+      item3 = create(:item, name: "mac", unit_price: 100.00)
+
+      get "/api/v1/items/find_all?min_price=20&max_price=80"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.length).to eq(1)
+      expect(items.first[:attributes][:name]).to eq("ipad")
+    end
+
+    it 'returns an empty array when no items match the search' do
+      get "/api/v1/items/find_all?name=NOMATCH"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to eq([])
     end
   end
 end

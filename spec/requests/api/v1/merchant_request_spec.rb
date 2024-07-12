@@ -72,23 +72,70 @@ describe 'merchants API' do
       expect(m[:attributes][:name]).to eq("Turing")
     end
 
-    it 'sad path for search for a merchant' do
-      get "/api/v1/merchants/find?name=dadsa"
-
-      expect(response).to_not be_successful
-      expect(response.status).to eq(404)
-      res = JSON.parse(response.body, symbolize_names:true)[:errors]
-
-      expect(res.first[:title]).to eq("Record Not Found")
-    end
-
     it ' sad path error for invalid search params ' do
       get "/api/v1/merchants/find?name="
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
       res = JSON.parse(response.body, symbolize_names:true)[:errors]
 
-      expect(res.first[:title]).to eq("Name Must Be Filled In")
+      expect(res.first[:title]).to eq("No valid search parameters provided")
+    end
+  end
+
+  describe '#search-extension' do
+    it 'can find a single merchant by name fragment' do
+      merchant1 = create(:merchant, name: "Turing")
+      merchant2 = create(:merchant, name: "Ring Makers")
+
+      get "/api/v1/merchants/find?name=ring"
+
+      expect(response).to be_successful
+      merchant = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchant[:attributes][:name]).to eq("Ring Makers")
+    end
+
+    it 'returns the first alphabetical match when multiple merchants match the search' do
+      merchant1 = create(:merchant, name: "Turing")
+      merchant2 = create(:merchant, name: "Ring Makers")
+
+      get "/api/v1/merchants/find?name=ing"
+
+      expect(response).to be_successful
+      merchant = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchant[:attributes][:name]).to eq("Ring Makers")
+    end
+
+    it 'returns an empty object when no merchants match the search' do
+      get "/api/v1/merchants/find?name=NOMATCH"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      merchant = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchant).to eq({})
+    end
+  end
+
+  describe '#search_all-extension' do
+    it 'can find all merchants matching a name fragment' do
+      merchant1 = create(:merchant, name: "Turing")
+      merchant2 = create(:merchant, name: "Ring Makers")
+      merchant3 = create(:merchant, name: "Other")
+
+      get "/api/v1/merchants/find_all?name=ring"
+
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchants.length).to eq(2)
+      expect(merchants.map { |m| m[:attributes][:name] }).to contain_exactly("Turing", "Ring Makers")
+    end
+
+    it 'returns an empty array when no merchants match the search' do
+      get "/api/v1/merchants/find_all?name=NOMATCH"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      merchants = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchants).to eq([])
     end
   end
 end
