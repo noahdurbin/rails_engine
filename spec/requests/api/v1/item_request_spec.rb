@@ -230,7 +230,7 @@ RSpec.describe "Item Api" do
     end
   end
 
-  describe '#search_all' do
+  describe '#search_all_extension' do
     it 'can find all items matching a name search' do
       item1 = create(:item, name: "Ring")
       item2 = create(:item, name: "Turing")
@@ -263,6 +263,33 @@ RSpec.describe "Item Api" do
       expect(response.status).to eq(200)
       items = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(items).to eq([])
+    end
+
+    it 'raises an error if you try to search with name and price' do
+      item1 = create(:item, name: "iphone", unit_price: 10.00)
+
+      get "/api/v1/items/find_all?name=iphone&max_price=80"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq 400
+    end
+
+    it 'raises an error if max price is lower than or equal to min price' do
+      item1 = create(:item, name: "iphone", unit_price: 10.00)
+
+      get "/api/v1/items/find_all?min_price=100&max_price=80"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq 400
+    end
+
+    it 'raises an error if a search price is negative' do
+      item1 = create(:item, name: "iphone", unit_price: 10.00)
+
+      get "/api/v1/items/find_all?min_price=-100"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq 400
     end
   end
 end
