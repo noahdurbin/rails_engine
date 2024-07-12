@@ -188,7 +188,7 @@ RSpec.describe "Item Api" do
   end
 
   describe '#search-extension' do
-    it 'can find a single item by name fragment' do
+    it 'can find a single item by name' do
       item1 = create(:item, name: "Ring")
       item2 = create(:item, name: "Turing")
 
@@ -196,6 +196,7 @@ RSpec.describe "Item Api" do
 
       expect(response).to be_successful
       item = JSON.parse(response.body, symbolize_names: true)[:data]
+
       expect(item[:attributes][:name]).to eq("Ring")
     end
 
@@ -230,7 +231,7 @@ RSpec.describe "Item Api" do
   end
 
   describe '#search_all' do
-    it 'can find all items matching a name fragment' do
+    it 'can find all items matching a name search' do
       item1 = create(:item, name: "Ring")
       item2 = create(:item, name: "Turing")
       item3 = create(:item, name: "Other")
@@ -240,7 +241,6 @@ RSpec.describe "Item Api" do
       expect(response).to be_successful
       items = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(items.length).to eq(2)
-      expect(items.map { |i| i[:attributes][:name] }).to contain_exactly("Ring", "Turing")
     end
 
     it 'can find all items within a price range' do

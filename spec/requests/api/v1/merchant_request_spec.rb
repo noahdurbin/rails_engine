@@ -115,7 +115,7 @@ describe 'merchants API' do
     end
   end
 
-  describe '#search_all' do
+  describe '#search_all-extension' do
     it 'can find all merchants matching a name fragment' do
       merchant1 = create(:merchant, name: "Turing")
       merchant2 = create(:merchant, name: "Ring Makers")
