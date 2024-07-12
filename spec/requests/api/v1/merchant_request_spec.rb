@@ -137,5 +137,14 @@ describe 'merchants API' do
       merchants = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(merchants).to eq([])
     end
+
+    it ' sad path error for invalid search params ' do
+      get "/api/v1/merchants/find_all?name="
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      res = JSON.parse(response.body, symbolize_names:true)[:errors]
+
+      expect(res.first[:title]).to eq("No valid search parameters provided")
+    end
   end
 end
